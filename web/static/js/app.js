@@ -19,3 +19,51 @@ import "deps/phoenix_html/web/static/js/phoenix_html"
 // paths "./socket" or full ones "web/static/js/socket".
 
 import socket from "./socket"
+
+const reduxConnector = (ReactComponent, initialState) => class extends React.Component {
+  constructor() {
+    super();
+    this.state = initialState;
+    this.channel = socket.channel("rooms:lobby", {})
+    this.channel.join()
+      .receive("ok", resp => {
+        console.log("Joined successfully", resp)
+      })
+      .receive("error", resp => { console.log("Unable to join", resp) })
+  }
+  takeAction(type) {
+    this.channel.push(type, this.state)
+      .receive("ok", msg => {
+        this.setState(msg);
+      });
+  }
+  render() {
+    return (
+      <div>
+        <ReactComponent
+          takeAction={this.takeAction.bind(this)}
+          reduxState={this.state}
+        />
+      </div>
+    );
+  }
+}
+
+class Counter extends React.Component {
+  render() {
+    return (
+      <div>
+        Clicked: {this.props.reduxState.count}
+        <button onClick={this.props.takeAction.bind(this, "increment")}>+</button>
+        <button onClick={this.props.takeAction.bind(this, "decrement")}>-</button>
+      </div>
+    );
+  }
+}
+
+const ReduxAppliedComponent = reduxConnector(Counter, {count: 0});
+
+React.render(
+  <ReduxAppliedComponent />,
+  document.getElementById("react-root")
+);

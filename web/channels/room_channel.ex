@@ -10,17 +10,19 @@ defmodule ReduxServer.RoomChannel do
     {:error, %{reason: "unauthorized"}}
   end
   def handle_in("increment", payload, socket) do
-    Logger.debug "increment"
-    action_result = true
-    state = payload["state"]
-    if action_result do
-      {
-        :reply,
-        {:ok, %{"state" => state + 1}},
-        socket
-      }
-    else
-      {:reply, {:error, state}, socket}
-    end
+    count = payload["count"]
+    {
+      :reply,
+      {:ok, %{"count" => count + 1}},
+      socket
+    }
+  end
+  def handle_in("decrement", payload, socket) do
+    count = payload["count"]
+    {
+      :reply,
+      {:ok, %{"count" => count - 1}},
+      socket
+    }
   end
 end
