@@ -1,0 +1,6 @@
+{
+  "name": "redux_server",
+  "dependencies": {
+    "react": "^0.14.0"
+  }
+}
