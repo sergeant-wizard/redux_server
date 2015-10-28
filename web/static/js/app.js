@@ -24,7 +24,7 @@ const reduxConnector = (ReactComponent, initialState) => class extends React.Com
   constructor() {
     super();
     this.state = initialState;
-    this.channel = socket.channel("rooms:lobby", {})
+    this.channel = socket.channel("redux:", {})
     this.channel.join()
       .receive("ok", resp => {
         console.log("Joined successfully", resp)
