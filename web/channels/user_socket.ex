@@ -2,7 +2,7 @@ defmodule ReduxServer.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "rooms:*", ReduxServer.RoomChannel
+  channel "rooms:*", ReduxServer.RoomChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket
