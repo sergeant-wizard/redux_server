@@ -1,24 +1,22 @@
 defmodule ReduxServer.ReduxReducer do
-  require Logger
   use Phoenix.Channel
 
+  def update_count("increment") do
+    fn(count) -> count + 1 end
+  end
+  def update_count("decrement") do
+    fn(count) -> count - 1 end
+  end
+  def reducer(type, state) do
+    Map.update(state, "count", 0, update_count(type))
+  end
   def join("redux:", _message, socket) do
-    Logger.debug "join"
     {:ok, socket}
   end
-  def handle_in("increment", payload, socket) do
-    count = payload["count"]
+  def handle_in(str, payload, socket) do
     {
       :reply,
-      {:ok, %{"count" => count + 1}},
-      socket
-    }
-  end
-  def handle_in("decrement", payload, socket) do
-    count = payload["count"]
-    {
-      :reply,
-      {:ok, %{"count" => count - 1}},
+      {:ok, reducer(str, payload)},
       socket
     }
   end

@@ -39,12 +39,10 @@ const reduxConnector = (ReactComponent, initialState) => class extends React.Com
   }
   render() {
     return (
-      <div>
-        <ReactComponent
-          takeAction={this.takeAction.bind(this)}
-          reduxState={this.state}
-        />
-      </div>
+      <ReactComponent
+        takeAction={this.takeAction.bind(this)}
+        reduxState={this.state}
+      />
     );
   }
 }
