@@ -23,13 +23,14 @@ import socket from "./socket"
 const reduxConnector = (ReactComponent, initialState) => class extends React.Component {
   constructor() {
     super();
-    this.state = initialState;
+    this.state = Object.assign({}, initialState, {user: Math.random()});
     this.channel = socket.channel("redux:", {})
     this.channel.join()
       .receive("ok", resp => {
         console.log("Joined successfully", resp)
       })
       .receive("error", resp => { console.log("Unable to join", resp) })
+    this.channel.on("update", msg => this.setState(msg));
   }
   takeAction(type) {
     this.channel.push(type, this.state)
@@ -54,6 +55,7 @@ class Counter extends React.Component {
         Clicked: {this.props.reduxState.count}
         <button onClick={this.props.takeAction.bind(this, "increment")}>+</button>
         <button onClick={this.props.takeAction.bind(this, "decrement")}>-</button>
+        <button onClick={this.props.takeAction.bind(this, "async")}>async</button>
       </div>
     );
   }
